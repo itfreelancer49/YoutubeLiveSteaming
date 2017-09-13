@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "984639427128",
+    "project_id": "ut-watchme"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984639427128:android:66b7b4c76c0c2e75",
+        "android_client_info": {
+          "package_name": "phonetubestreaming.google.android.apps.watchme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984639427128-7rdd83orpj36cvsstbsop3gg83pqeno0.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "984639427128-8mfo172f3pd0qqe4380rlhq8e6oaehd8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "phonetubestreaming.google.android.apps.watchme",
+            "certificate_hash": "a40fa454e93e9348834f2cd18634e12869563f87"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8IHdFglArtclvd3NCv0PDL1POe_fdBaA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

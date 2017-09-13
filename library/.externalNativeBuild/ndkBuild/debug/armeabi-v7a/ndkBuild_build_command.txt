@@ -1,0 +1,17 @@
+Executable : /Users/nomankhan/Library/Android/sdk/ndk-bundle/ndk-build
+arguments : 
+NDK_PROJECT_PATH=null
+APP_BUILD_SCRIPT=/Clients/Ankur/yt-watchme/library/src/main/cpp/Android.mk
+NDK_APPLICATION_MK=/Clients/Ankur/yt-watchme/library/src/main/cpp/Application.mk
+APP_ABI=armeabi-v7a
+NDK_ALL_ABIS=armeabi-v7a
+NDK_DEBUG=1
+APP_PLATFORM=android-16
+NDK_OUT=/Clients/Ankur/yt-watchme/library/build/intermediates/ndkBuild/debug/obj
+NDK_LIBS_OUT=/Clients/Ankur/yt-watchme/library/build/intermediates/ndkBuild/debug/lib
+APP_SHORT_COMMANDS=false
+LOCAL_SHORT_COMMANDS=false
+-B
+-n
+jvmArgs : 
+
