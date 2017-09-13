@@ -53,15 +53,10 @@
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name">
         </activity>
-        <activity
-          android:name="phonetubestreaming.google.android.apps.watchme.VideoRecordUploadActivity"
-          android:configChanges="orientation|screenSize"
-          android:label="@string/app_name">
-        </activity>
-        <activity
+      <activity
             android:name="phonetubestreaming.google.android.apps.watchme.StreamerActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
 
         <service android:name="phonetubestreaming.google.android.apps.watchme.StreamerService" />
 

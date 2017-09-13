@@ -1,6 +1,7 @@
 package phonetubestreaming.google.android.apps.watchme;
 
 import android.Manifest;
+import android.Manifest.permission;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -43,6 +44,8 @@ public class PermissionsActivity extends AppCompatActivity {
             permissionsNeeded.add("GET_ACCOUNTS");
         if (!addPermission(permissionsList, android.Manifest.permission.CAMERA))
             permissionsNeeded.add("Camera");
+        if (!addPermission(permissionsList, permission.RECORD_AUDIO))
+            permissionsNeeded.add("Audio");
 
 
         if (permissionsList.size() > 0) {
@@ -101,6 +104,7 @@ public class PermissionsActivity extends AppCompatActivity {
                 perms.put(android.Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.GET_ACCOUNTS, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(permission.RECORD_AUDIO, PackageManager.PERMISSION_GRANTED);
 
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
@@ -110,6 +114,8 @@ public class PermissionsActivity extends AppCompatActivity {
                         && perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
                         && perms.get(android.Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED
                         && perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(permission.RECORD_AUDIO) == PackageManager
+                        .PERMISSION_GRANTED
 
                         ) {
                     // All Permissions Granted

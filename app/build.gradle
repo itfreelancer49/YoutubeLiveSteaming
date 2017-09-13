@@ -32,5 +32,4 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.google.code.gson:gson:2.3'
 
-    compile project(path: ':library')
 }

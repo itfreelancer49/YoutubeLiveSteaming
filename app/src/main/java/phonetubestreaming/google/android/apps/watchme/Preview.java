@@ -34,7 +34,7 @@ import java.util.List;
  *         <p/>
  *         Preview class which previews the camera.
  */
-class Preview extends ViewGroup implements SurfaceHolder.Callback {
+public class Preview extends ViewGroup implements SurfaceHolder.Callback {
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     Size previewSize;
