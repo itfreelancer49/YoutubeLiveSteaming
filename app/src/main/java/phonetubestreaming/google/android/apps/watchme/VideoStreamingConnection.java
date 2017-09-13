@@ -62,6 +62,7 @@ public class VideoStreamingConnection implements VideoStreamingInterface {
             }
         });
 
+        // need to work here
         synchronized (frame_mutex) {
             Size previewSize = videoFrameGrabber.start(camera);
             audioFrameGrabber.start(AUDIO_SAMPLE_RATE);
