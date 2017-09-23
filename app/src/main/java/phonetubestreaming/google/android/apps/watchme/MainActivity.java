@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -31,6 +32,11 @@ import android.view.Window;
 import android.widget.Button;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
+import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import phonetubestreaming.google.android.apps.watchme.util.EventData;
 import phonetubestreaming.google.android.apps.watchme.util.NetworkSingleton;
 import phonetubestreaming.google.android.apps.watchme.util.Utils;
@@ -65,18 +71,21 @@ public class MainActivity extends Activity implements
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final int REQUEST_AUTHORIZATION = 3;
     private static final int REQUEST_STREAMER = 4;
-    final HttpTransport transport = AndroidHttp.newCompatibleTransport();
-    final JsonFactory jsonFactory = new GsonFactory();
-    GoogleAccountCredential credential;
+    static final HttpTransport transport = AndroidHttp.newCompatibleTransport();
+    static final JsonFactory jsonFactory = new GsonFactory();
+    static GoogleAccountCredential credential;
     private String mChosenAccountName;
     private ImageLoader mImageLoader;
     private EventsListFragment mEventsListFragment;
+    private static String broadcastId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         ensureLoader();
 
@@ -97,21 +106,28 @@ public class MainActivity extends Activity implements
                 .findFragmentById(R.id.list_fragment);
     }
 
+    public static void test(){
+        new StartEventTask().execute(broadcastId);
+
+    }
     public void startStreaming(EventData event) {
 
 
-        String broadcastId = event.getId();
+         broadcastId = event.getId();
 
         new StartEventTask().execute(broadcastId);
 
         Intent intent = new Intent(getApplicationContext(),
                 StreamerActivity.class);
-        /*ServerUrl: rtmp://a.rtmp.youtube.com/live2
-            Stream name: 0a8xg7gq--w54q-96fp
-           */
+        //*ServerUrl: rtmp://a.rtmp.youtube.com/live2/0a8xg7gq--w54q-96fp
+         //   Stream name:
+
         intent.putExtra(YouTubeApi.RTMP_URL_KEY, event.getIngestionAddress()); // event"+ ".getIngestionAddress()
         intent.putExtra(YouTubeApi.BROADCAST_ID_KEY, broadcastId);
         startActivityForResult(intent, REQUEST_STREAMER);
+
+       /* Intent intent = new Intent(this, MainCamerRecordingActivity.class);
+        startActivity(intent);*/
 
     }
 
@@ -381,13 +397,13 @@ public class MainActivity extends Activity implements
         }
     }
 
-    private class StartEventTask extends AsyncTask<String, Void, Void> {
+    private static class StartEventTask extends AsyncTask<String, Void, Void> {
         private ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(MainActivity.this, null,
-                    getResources().getText(R.string.startingEvent), true);
+          //  progressDialog = ProgressDialog.show(MainActivity.this, null,
+          //          getResources().getText(R.string.startingEvent), true);
         }
 
         @Override
@@ -396,9 +412,11 @@ public class MainActivity extends Activity implements
                     credential).setApplicationName(APP_NAME)
                     .build();
             try {
+                //rtmp://a.rtmp.youtube.com/live2/g7gq-0a8x-w54q-96fp
+                //streamInit();
                 YouTubeApi.startEvent(youtube, params[0]);
             } catch (UserRecoverableAuthIOException e) {
-                startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+               // startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
                 Log.e(MainActivity.APP_NAME, "", e);
             }
@@ -407,10 +425,11 @@ public class MainActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Void param) {
-            progressDialog.dismiss();
+          //  progressDialog.dismiss();
         }
 
     }
+
 
     private class EndEventTask extends AsyncTask<String, Void, Void> {
         private ProgressDialog progressDialog;

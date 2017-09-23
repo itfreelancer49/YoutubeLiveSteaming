@@ -146,10 +146,13 @@ public class YouTubeApi {
             YouTube youtube) throws IOException {
         Log.i(MainActivity.APP_NAME, "Requesting live events.");
 
+
         YouTube.LiveBroadcasts.List liveBroadcastRequest = youtube
-                .liveBroadcasts().list("id,snippet,contentDetails");
-        // liveBroadcastRequest.setMine(true);
+                .liveBroadcasts()
+                .list("id,snippet,contentDetails");
         liveBroadcastRequest.setBroadcastStatus("upcoming");
+        liveBroadcastRequest.set("key", "Put Your Key");
+        liveBroadcastRequest.set("broadcastType", "persistent");
 
         // List request is executed and list of broadcasts are returned
         LiveBroadcastListResponse returnedListResponse = liveBroadcastRequest.execute();
@@ -177,7 +180,7 @@ public class YouTubeApi {
             throws IOException {
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(0000);
         } catch (InterruptedException e) {
             Log.e(MainActivity.APP_NAME, "", e);
         }
@@ -185,6 +188,7 @@ public class YouTubeApi {
         Transition transitionRequest = youtube.liveBroadcasts().transition(
                 "live", broadcastId, "status");
         transitionRequest.execute();
+
     }
 
     public static void endEvent(YouTube youtube, String broadcastId)

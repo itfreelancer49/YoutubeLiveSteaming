@@ -13,9 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="phonetubestreaming.google.android.apps.watchme">
+  package="phonetubestreaming.google.android.apps.watchme">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -25,23 +24,25 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false"></uses-feature>
+      android:name="android.hardware.camera"
+      android:required="false" />
     <uses-feature
-        android:name="android.hardware.camera.front"
-        android:required="false"></uses-feature>
+      android:name="android.hardware.camera.front"
+      android:required="false" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+      android:allowBackup="true"
+      android:icon="@drawable/ic_launcher"
+      android:label="@string/app_name"
+      android:theme="@style/AppTheme">
         <activity
-            android:name=".PermissionsActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name">
+          android:configChanges="orientation|screenSize"
+          android:label="@string/app_name"
+          android:name=".PermissionsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,21 +50,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="phonetubestreaming.google.android.apps.watchme.MainActivity"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name">
-        </activity>
-      <activity
-            android:name="phonetubestreaming.google.android.apps.watchme.StreamerActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"/>
+          android:configChanges="orientation|screenSize"
+          android:label="@string/app_name"
+          android:name=".MainActivity"></activity>
+        <activity
+          android:label="@string/app_name"
+          android:name=".StreamerActivity"
+          android:screenOrientation="portrait" />
 
-        <service android:name="phonetubestreaming.google.android.apps.watchme.StreamerService" />
+        <service android:name=".StreamerService" />
 
         <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+          android:name="com.google.android.gms.version"
+          android:value="@integer/google_play_services_version" />
 
+        <activity android:name=".MainCamerRecordingActivity" />
     </application>
 
 </manifest>

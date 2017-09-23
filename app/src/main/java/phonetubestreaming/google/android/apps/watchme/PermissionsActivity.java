@@ -46,6 +46,10 @@ public class PermissionsActivity extends AppCompatActivity {
             permissionsNeeded.add("Camera");
         if (!addPermission(permissionsList, permission.RECORD_AUDIO))
             permissionsNeeded.add("Audio");
+        if (!addPermission(permissionsList, permission.WRITE_EXTERNAL_STORAGE))
+            permissionsNeeded.add("WRITE_EXTERNAL_STORAGE");
+        if (!addPermission(permissionsList, permission.READ_EXTERNAL_STORAGE))
+            permissionsNeeded.add("READ_EXTERNAL_STORAGE");
 
 
         if (permissionsList.size() > 0) {
@@ -105,6 +109,8 @@ public class PermissionsActivity extends AppCompatActivity {
                 perms.put(android.Manifest.permission.GET_ACCOUNTS, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
                 perms.put(permission.RECORD_AUDIO, PackageManager.PERMISSION_GRANTED);
+                perms.put(permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
 
                 // Fill with results
                 for (int i = 0; i < permissions.length; i++)
@@ -114,8 +120,9 @@ public class PermissionsActivity extends AppCompatActivity {
                         && perms.get(android.Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
                         && perms.get(android.Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED
                         && perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(permission.RECORD_AUDIO) == PackageManager
-                        .PERMISSION_GRANTED
+                        && perms.get(permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
                         ) {
                     // All Permissions Granted

@@ -31,5 +31,6 @@ dependencies {
     compile 'com.google.api-client:google-api-client-gson:+'
     compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.google.code.gson:gson:2.3'
-
+    compile 'com.github.hiteshsondhi88.libffmpeg:FFmpegAndroid:0.2.5'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }

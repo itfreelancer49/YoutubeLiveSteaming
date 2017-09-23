@@ -26,6 +26,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import android.view.SurfaceView;
 import phonetubestreaming.google.android.apps.watchme.util.Utils;
 
 /**
@@ -64,12 +65,12 @@ public class StreamerService extends Service {
         return false;
     }
 
-    public void startStreaming(String streamUrl) {
+    public void startStreaming(String streamUrl, Preview surfaceView) {
         Log.d(MainActivity.APP_NAME, "startStreaming");
         showForegroundNotification();
-        connection = new VideoStreamingConnection();
+        connection = new VideoStreamingConnection(this);
         // TODO Pass an actual preview surface.
-        connection.open(streamUrl, camera, null);
+        connection.open(streamUrl, camera, surfaceView.getSurfaceView().getHolder().getSurface());
     }
 
     public void stopStreaming() {
