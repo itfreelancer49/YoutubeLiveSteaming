@@ -12,22 +12,16 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme;
-
-import static android.R.attr.data;
+package livestreaming.google.android.apps.youtube;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.ImageFormat;
 import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PreviewCallback;
 import android.media.MediaRecorder;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -35,29 +29,26 @@ import android.os.PowerManager;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.services.youtube.YouTube;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import phonetubestreaming.google.android.apps.watchme.util.Utils;
-import phonetubestreaming.google.android.apps.watchme.util.YouTubeApi;
+
+import livestreaming.google.android.apps.youtube.util.Utils;
+import livestreaming.google.android.apps.youtube.util.YouTubeApi;
 
 /**
  * @author Ibrahim Ulukaya <ulukaya@google.com> <p/>// StreamerActivity class which previews the
@@ -95,12 +86,16 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
     private Rect r;
     private byte[] mCallbackBuffer;
     private String path;
-    private  ToggleButton toggleButton;
+    private ToggleButton toggleButton;
     private List<StreamPath> listPath;
     private int streamIndex = 0;
     private String pathStreamPath;
     private Handler handler;
     private Runnable runnable;
+
+    private ProgressDialog mProgressDialog;
+
+    private boolean isStreamingStarted = false;
 
 
     @Override
@@ -111,6 +106,7 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
         listPath = new ArrayList<>();
 
         ffmpeg = FFmpeg.getInstance(this);
+
 
         try {
             //Load the binary
@@ -265,7 +261,7 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
      */
     @Override
     public void onRequestPermissionsResult(int requestCode,
-            String permissions[], int[] grantResults) {
+                                           String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CAMERA_MICROPHONE: {
                 Log.i(MainActivity.APP_NAME,
@@ -307,6 +303,32 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
     }*/
 
     public void endEvent(View view) {
+        stopRecording();
+
+        if (mProgressDialog == null) {
+            mProgressDialog = ProgressDialog.show(StreamerActivity.this, null,
+                    getResources().getText(R.string.endingEvent), true);
+            mProgressDialog.setCancelable(false);
+        }
+
+        if (!mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+
+        if (handler != null) {
+            handler.removeCallbacks(runnable);
+        }
+
+        if (!isStreamingStarted) {
+            if (streamIndex == 0) {
+                streamInit(rtmpUrl, getPathStreamPath());
+            }
+        }
+
+
+    }
+
+    private void finishCurrentActivity() {
         Intent data = new Intent();
         data.putExtra(YouTubeApi.BROADCAST_ID_KEY, broadcastId);
         if (getParent() == null) {
@@ -316,7 +338,6 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
         }
         finish();
     }
-
 
     @SuppressLint("NewApi")
     protected void startRecording(String path) throws IOException {
@@ -334,13 +355,55 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+           /* int width = 320;
+            int height = 240;
+            try {
+                //get the available sizes of the video
+                List<Camera.Size> tmpList = getSupportedVideoSizes();
+
+                final List<Camera.Size> sizeList = new Vector<Camera.Size>();
+
+                // compare the apsect ratio of the candidate sizes against the
+                // real ratio
+                Double aspectRatio = (Double.valueOf(getWindowManager()
+                        .getDefaultDisplay().getHeight()) / getWindowManager()
+                        .getDefaultDisplay().getWidth());
+                for (int i = tmpList.size() - 1; i > 0; i--) {
+                    Double tmpRatio = Double.valueOf(tmpList.get(i).height)
+                            / tmpList.get(i).width;
+
+                    if (Math.abs(aspectRatio - tmpRatio) < .15) {
+                        width = tmpList.get(i).width;
+                        height = tmpList.get(i).height;
+                        sizeList.add(tmpList.get(i));
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+*/
+
+            // set the size of video.
+            // If the size is not applicable then throw the media recorder stop
+            // -19 error
+            mediaRecorder.setVideoSize(720, 480);
+
+
+            // Set the video encoding bit rate this changes for the high, low.
+            // medium quality devices
+            mediaRecorder.setVideoEncodingBitRate(1700000);
+
+            //Set the video frame rate
+            mediaRecorder.setVideoFrameRate(30);
+
             mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
             mediaRecorder.setOutputFile(path);
             mediaRecorder.setOrientationHint(90);
             mediaRecorder.prepare();
-             mediaRecorder.start();
+            mediaRecorder.start();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -348,11 +411,23 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
         }
     }
 
+    public List<Camera.Size> getSupportedVideoSizes() {
+        Parameters params = mCamera.getParameters();
+        if (params.getSupportedVideoSizes() != null) {
+            return params.getSupportedVideoSizes();
+        } else {
+            // Video sizes may be null, which indicates that all the supported
+            // preview sizes are supported for video recording.
+            return params.getSupportedPreviewSizes();
+        }
+    }
+
+
     protected void stopRecording() {
         if (mediaRecorder != null) {
             mediaRecorder.reset(); // clear recorder configuration
             mediaRecorder.release();
-           // mCamera.release();
+            // mCamera.release();
             // mCamera.lock();
         }
     }
@@ -374,7 +449,7 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
-            int height) {
+                               int height) {
 
         holder.setFixedSize(width, height);
         // Start the preview
@@ -387,7 +462,12 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
         r = new Rect(80, 20, previewWidth, previewHeight);
 
         mCallbackBuffer = new byte[460800];
-
+        List<String> focusModes = params.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
         mCamera.setParameters(params);
         mCamera.setDisplayOrientation(90);
 
@@ -397,7 +477,7 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
             e.printStackTrace();
         }
 
-       // mCamera.setPreviewCallback(Camera.this);
+        // mCamera.setPreviewCallback(Camera.this);
         mCamera.startPreview();
 
         try {
@@ -417,11 +497,13 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
                     stopRecording();
                     startRecording(getPath());
 
-                   // toggleButton.setEnabled(false);
-                    if (streamIndex == 0){
+                    // toggleButton.setEnabled(false);
+                    if (streamIndex == 0) {
                         streamInit(rtmpUrl, getPathStreamPath());
+                        ++streamIndex;
                     }
-                    handler.postDelayed(runnable, 20000);
+                    handler.postDelayed(runnable, 10000);
+                    Log.e("calling", "handler");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -429,7 +511,7 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
             }
         };
 
-        handler.postDelayed(runnable, 20000);
+        handler.postDelayed(runnable, 10000);
 
     }
 
@@ -449,6 +531,13 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
 
         if (mCamera != null) {
             Parameters params = mCamera.getParameters();
+            List<String> focusModes = params.getSupportedFocusModes();
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }
+
             mCamera.setParameters(params);
             mCamera.setDisplayOrientation(90);
 
@@ -479,7 +568,7 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
 
     private void streamInit(String url, final String path) {
         try {
-
+            isStreamingStarted = true;
             String cmd = "-re -i " + path + " -c copy -f flv "
                     + url;
 
@@ -489,33 +578,43 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
                         @Override
                         public void onStart() {
                             //for logcat
-                            Log.d(null, "Streaming initialized");
+                            Log.e("start", "Streaming initialized");
                         }
 
                         @Override
                         public void onProgress(String message) {
                             //for logcat
-                            Log.d(null, message.toString());
+                            Log.e("progress", message.toString());
                         }
 
                         @Override
                         public void onFailure(String message) {
 
-                            Log.d(null, message.toString());
+                            Log.e("failure", message.toString());
                         }
 
                         @Override
                         public void onSuccess(String message) {
 
-                            Log.d(null, message.toString());
+                            Log.e("success", message.toString());
                         }
 
                         @Override
                         public void onFinish() {
-
-                            ++streamIndex;
-                            streamInit(rtmpUrl, getPathStreamPath());
-
+                            if (getPathStreamPath(streamIndex - 1) != null) {
+                                new File(getPathStreamPath(streamIndex - 1)).delete();
+                            }
+                            //int index = streamIndex + 1;
+                            if (listPath.size() > streamIndex) {
+                                streamInit(rtmpUrl, getPathStreamPath());
+                                // new File(listPath.get(streamIndex).getVideoPath()).delete();
+                                ++streamIndex;
+                            } else {
+                                if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                                    mProgressDialog.dismiss();
+                                }
+                                finishCurrentActivity();
+                            }
                             Log.d(null, "Streaming done..");
                         }
                     });
@@ -528,6 +627,11 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
 
     public String getPathStreamPath() {
         StreamPath streamPath = listPath.get(streamIndex);
+        return streamPath.getVideoPath();
+    }
+
+    public String getPathStreamPath(int index) {
+        StreamPath streamPath = listPath.get(index);
         return streamPath.getVideoPath();
     }
 
@@ -544,7 +648,7 @@ public class StreamerActivity extends Activity implements SurfaceHolder.Callback
         }
 
         Date date = new Date();
-        String fileName =  "/rec" + date.toString().replace(" ", "_").replace(":", "_") + ".mp4";
+        String fileName = "/rec" + date.toString().replace(" ", "_").replace(":", "_") + ".mp4";
         File file = new File(dir, fileName);
         try {
             file.createNewFile();

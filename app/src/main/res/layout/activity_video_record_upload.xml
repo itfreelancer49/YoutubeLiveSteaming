@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="phonetubestreaming.google.android.apps.watchme.VideoRecordUploadActivity">
+    tools:context="livestreaming.google.android.apps.youtube.VideoRecordUploadActivity">
 
     <net.ossrs.yasea.SrsCameraView
         android:layout_width="match_parent"

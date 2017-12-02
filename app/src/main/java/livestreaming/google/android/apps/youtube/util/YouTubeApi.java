@@ -12,11 +12,11 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme.util;
+package livestreaming.google.android.apps.youtube.util;
 
 import android.util.Log;
 
-import phonetubestreaming.google.android.apps.watchme.MainActivity;
+import livestreaming.google.android.apps.youtube.MainActivity;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
@@ -151,7 +151,7 @@ public class YouTubeApi {
                 .liveBroadcasts()
                 .list("id,snippet,contentDetails");
         liveBroadcastRequest.setBroadcastStatus("upcoming");
-        liveBroadcastRequest.set("key", "Put Your Key");
+        liveBroadcastRequest.set("key", "AIzaSyBUK4V_rYIFo83UwNcDYjdOT8vYt6hRppI");
         liveBroadcastRequest.set("broadcastType", "persistent");
 
         // List request is executed and list of broadcasts are returned
@@ -187,14 +187,20 @@ public class YouTubeApi {
 
         Transition transitionRequest = youtube.liveBroadcasts().transition(
                 "live", broadcastId, "status");
-        transitionRequest.execute();
-
+        LiveBroadcast broadcast = transitionRequest.execute();
+        EventData event = new EventData();
+        event.setEvent(broadcast);
+        String streamId = broadcast.getContentDetails().getBoundStreamId();
+        if (streamId != null) {
+            String ingestionAddress = getIngestionAddress(youtube, streamId);
+            event.setIngestionAddress(ingestionAddress);
+        }
     }
 
     public static void endEvent(YouTube youtube, String broadcastId)
             throws IOException {
         Transition transitionRequest = youtube.liveBroadcasts().transition(
-                "completed", broadcastId, "status");
+                "complete", broadcastId, "status");
         transitionRequest.execute();
     }
 

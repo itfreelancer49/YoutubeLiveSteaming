@@ -25,35 +25,11 @@
 
     <fragment
         android:id="@+id/list_fragment"
-        android:name="phonetubestreaming.google.android.apps.watchme.EventsListFragment"
+        android:name="livestreaming.google.android.apps.youtube.EventsListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         tools:layout="@layout/list_fragment" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#eee"
-        android:divider="?android:dividerVertical"
-        android:showDividers="middle">
-
-        <Button
-            android:id="@+id/create_button"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/ic_device_access_video"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-condensed"
-            android:hint="@string/button_create"
-            android:maxLines="2"
-            android:onClick="createEvent"
-            android:padding="8dp"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textColorHint="#c00"
-            android:textStyle="bold" />
-    </LinearLayout>
 
 </LinearLayout>

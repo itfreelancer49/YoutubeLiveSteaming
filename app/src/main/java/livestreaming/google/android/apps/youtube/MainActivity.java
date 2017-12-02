@@ -12,7 +12,7 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme;
+package livestreaming.google.android.apps.youtube;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -27,20 +27,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
-import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
-import phonetubestreaming.google.android.apps.watchme.util.EventData;
-import phonetubestreaming.google.android.apps.watchme.util.NetworkSingleton;
-import phonetubestreaming.google.android.apps.watchme.util.Utils;
-import phonetubestreaming.google.android.apps.watchme.util.YouTubeApi;
+
+import livestreaming.google.android.apps.youtube.util.EventData;
+import livestreaming.google.android.apps.youtube.util.NetworkSingleton;
+import livestreaming.google.android.apps.youtube.util.Utils;
+import livestreaming.google.android.apps.youtube.util.YouTubeApi;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -79,13 +73,13 @@ public class MainActivity extends Activity implements
     private EventsListFragment mEventsListFragment;
     private static String broadcastId;
 
+    private boolean isEventFinished;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         ensureLoader();
 
@@ -106,21 +100,22 @@ public class MainActivity extends Activity implements
                 .findFragmentById(R.id.list_fragment);
     }
 
-    public static void test(){
+    public static void test() {
         new StartEventTask().execute(broadcastId);
 
     }
+
     public void startStreaming(EventData event) {
 
 
-         broadcastId = event.getId();
+        broadcastId = event.getId();
 
         new StartEventTask().execute(broadcastId);
 
         Intent intent = new Intent(getApplicationContext(),
                 StreamerActivity.class);
         //*ServerUrl: rtmp://a.rtmp.youtube.com/live2/0a8xg7gq--w54q-96fp
-         //   Stream name:
+        //   Stream name:
 
         intent.putExtra(YouTubeApi.RTMP_URL_KEY, event.getIngestionAddress()); // event"+ ".getIngestionAddress()
         intent.putExtra(YouTubeApi.BROADCAST_ID_KEY, broadcastId);
@@ -138,9 +133,9 @@ public class MainActivity extends Activity implements
         new GetLiveEventsTask().execute();
     }
 
-    public void createEvent(View view) {
+   /* public void createEvent(View view) {
         new CreateLiveEventTask().execute();
-    }
+    }*/
 
     private void ensureLoader() {
         if (mImageLoader == null) {
@@ -149,11 +144,11 @@ public class MainActivity extends Activity implements
         }
     }
 
-    private void loadAccount() {
+    void loadAccount() {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(this);
         mChosenAccountName = sp.getString(ACCOUNT_KEY, null);
-        invalidateOptionsMenu();
+        //invalidateOptionsMenu();
     }
 
     private void saveAccount() {
@@ -162,11 +157,14 @@ public class MainActivity extends Activity implements
         sp.edit().putString(ACCOUNT_KEY, mChosenAccountName).apply();
     }
 
-    private void loadData() {
+    public void loadData() {
         if (mChosenAccountName == null) {
             return;
         }
-        getLiveEvents();
+
+        if (!isEventFinished) {
+            getLiveEvents();
+        }
     }
 
     @Override
@@ -176,9 +174,9 @@ public class MainActivity extends Activity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
+        // super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.activity_main, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -227,6 +225,7 @@ public class MainActivity extends Activity implements
             case REQUEST_STREAMER:
                 if (resultCode == Activity.RESULT_OK && data != null
                         && data.getExtras() != null) {
+                    isEventFinished = true;
                     String broadcastId = data.getStringExtra(YouTubeApi.BROADCAST_ID_KEY);
                     if (broadcastId != null) {
                         new EndEventTask().execute(broadcastId);
@@ -287,7 +286,7 @@ public class MainActivity extends Activity implements
         }
     }
 
-    private void chooseAccount() {
+    void chooseAccount() {
         startActivityForResult(credential.newChooseAccountIntent(),
                 REQUEST_ACCOUNT_PICKER);
     }
@@ -385,8 +384,10 @@ public class MainActivity extends Activity implements
         protected void onPostExecute(
                 List<EventData> fetchedEvents) {
 
-            Button buttonCreateEvent = (Button) findViewById(R.id.create_button);
-            buttonCreateEvent.setEnabled(true);
+
+           /* if(fetchedEvents!=null && fetchedEvents.size()>0){
+                new GetLiveEventsTask().execute();
+            }*/
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -402,8 +403,8 @@ public class MainActivity extends Activity implements
 
         @Override
         protected void onPreExecute() {
-          //  progressDialog = ProgressDialog.show(MainActivity.this, null,
-          //          getResources().getText(R.string.startingEvent), true);
+            //  progressDialog = ProgressDialog.show(MainActivity.this, null,
+            //          getResources().getText(R.string.startingEvent), true);
         }
 
         @Override
@@ -416,7 +417,7 @@ public class MainActivity extends Activity implements
                 //streamInit();
                 YouTubeApi.startEvent(youtube, params[0]);
             } catch (UserRecoverableAuthIOException e) {
-               // startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+                // startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
                 Log.e(MainActivity.APP_NAME, "", e);
             }
@@ -425,19 +426,16 @@ public class MainActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Void param) {
-          //  progressDialog.dismiss();
+            //  progressDialog.dismiss();
         }
 
     }
 
 
     private class EndEventTask extends AsyncTask<String, Void, Void> {
-        private ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(MainActivity.this, null,
-                    getResources().getText(R.string.endingEvent), true);
         }
 
         @Override
@@ -450,7 +448,7 @@ public class MainActivity extends Activity implements
                     YouTubeApi.endEvent(youtube, params[0]);
                 }
             } catch (UserRecoverableAuthIOException e) {
-                startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
+                //  startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
             } catch (IOException e) {
                 Log.e(MainActivity.APP_NAME, "", e);
             }
@@ -459,7 +457,17 @@ public class MainActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Void param) {
-            progressDialog.dismiss();
+            if (isEventFinished) {
+                Utils.deleteContentsOfDirectory(Utils.createFolder(Environment.getExternalStorageDirectory() +
+                        "/UTWatchMeVideos"));
+                new GetLiveEventsTask().execute();
+                isEventFinished = false;
+            }
         }
     }
+
+
 }
+
+
+

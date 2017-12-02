@@ -12,7 +12,7 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme;
+package livestreaming.google.android.apps.youtube;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -26,8 +26,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import android.view.SurfaceView;
-import phonetubestreaming.google.android.apps.watchme.util.Utils;
+import livestreaming.google.android.apps.youtube.util.Utils;
 
 /**
  * @author Ibrahim Ulukaya <ulukaya@google.com>

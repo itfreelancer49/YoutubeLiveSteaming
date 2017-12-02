@@ -1,4 +1,4 @@
-package phonetubestreaming.google.android.apps.watchme;
+package livestreaming.google.android.apps.youtube;
 
 import android.Manifest;
 import android.Manifest.permission;

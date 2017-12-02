@@ -12,7 +12,7 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme;
+package livestreaming.google.android.apps.youtube;
 
 /**
  * @author Ibrahim Ulukaya <ulukaya@google.com>

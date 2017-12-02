@@ -12,12 +12,11 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme;
+package livestreaming.google.android.apps.youtube;
 
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;

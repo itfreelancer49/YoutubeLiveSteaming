@@ -12,7 +12,7 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme.util;
+package livestreaming.google.android.apps.youtube.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;

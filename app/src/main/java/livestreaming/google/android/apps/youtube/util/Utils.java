@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme.util;
+package livestreaming.google.android.apps.youtube.util;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -23,14 +23,16 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
-import phonetubestreaming.google.android.apps.watchme.MainActivity;
-import phonetubestreaming.google.android.apps.watchme.R;
+import livestreaming.google.android.apps.youtube.MainActivity;
+import livestreaming.google.android.apps.youtube.R;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.Scopes;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.youtube.YouTubeScopes;
+
+import java.io.File;
 
 /**
  * Class containing some static utility methods.
@@ -171,5 +173,25 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static void deleteContentsOfDirectory(File file) {
+        if (file.isDirectory()) {
+            File[] listFiles = file.listFiles();
+            if (listFiles != null) {
+                for (File imageFile : file.listFiles()) {
+                    imageFile.delete();
+                }
+            }
+        }
+    }
+
+    public static File createFolder(String path) {
+        File muraLifeFolder = new File(path);
+
+        if (!muraLifeFolder.exists()) {
+            muraLifeFolder.mkdirs();
+        }
+        return muraLifeFolder;
     }
 }

@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "996050856093",
+    "firebase_url": "https://fir-ut-watchme.firebaseio.com",
+    "project_id": "firebase-ut-watchme",
+    "storage_bucket": "firebase-ut-watchme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996050856093:android:66b7b4c76c0c2e75",
+        "android_client_info": {
+          "package_name": "phonetubestreaming.google.android.apps.watchme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996050856093-rieqs2lgp0mvciqvgkvg71spmf6s6eon.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "996050856093-2eiduojoqssor1vujtu8l076v21fi8tk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "phonetubestreaming.google.android.apps.watchme",
+            "certificate_hash": "b2aa41a0713f5e66c092d86763ce045c206e5b01"
+          }
+        },
+        {
+          "client_id": "996050856093-iemifva88uk96rfufm50jfi7vrut1n4h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTfmnhxaFQex6WsaV1MrQVMc7acx5SA8Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "996050856093-rieqs2lgp0mvciqvgkvg71spmf6s6eon.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

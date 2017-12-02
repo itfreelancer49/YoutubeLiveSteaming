@@ -12,10 +12,11 @@
  * the License.
  */
 
-package phonetubestreaming.google.android.apps.watchme;
+package livestreaming.google.android.apps.youtube;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,11 +31,14 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import phonetubestreaming.google.android.apps.watchme.util.EventData;
+
+import livestreaming.google.android.apps.youtube.util.EventData;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.PlusOneButton;
 import com.google.android.gms.plus.model.people.Person;
@@ -79,7 +83,32 @@ public class EventsListFragment extends Fragment implements
         TextView emptyView = (TextView) listView
                 .findViewById(android.R.id.empty);
         mGridView.setEmptyView(emptyView);
+        ImageView logoutImageview = (ImageView) listView.findViewById(R.id.imageview_logout);
+        logoutImageview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
         return listView;
+    }
+
+    private void logout() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.clearDefaultAccountAndReconnect().setResultCallback(new ResultCallback<Status>() {
+
+                @Override
+                public void onResult(Status status) {
+                    mGoogleApiClient.disconnect();
+                    Intent intent = new Intent(getActivity(), SplashActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    getActivity().finish();
+                    Toast.makeText(getActivity().getApplicationContext(), "Logged out successfully.", Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }
     }
 
     @Override
@@ -116,6 +145,7 @@ public class EventsListFragment extends Fragment implements
             }
         }
     }
+
 
     @Override
     public void onResume() {
@@ -221,7 +251,8 @@ public class EventsListFragment extends Fragment implements
                         R.layout.list_item, container, false);
             }
 
-            EventData event = mEvents.get(position);
+            final EventData event = mEvents.get(position);
+            ImageView mShareImageView = (ImageView) convertView.findViewById(R.id.imageview_share);
             ((TextView) convertView.findViewById(android.R.id.text1))
                     .setText(event.getTitle());
             ((NetworkImageView) convertView.findViewById(R.id.thumbnail)).setImageUrl(event.getThumbUri(), mImageLoader);
@@ -229,6 +260,17 @@ public class EventsListFragment extends Fragment implements
                 ((PlusOneButton) convertView.findViewById(R.id.plus_button))
                         .initialize(event.getWatchUri(), null);
             }
+            mShareImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT,
+                            event.getWatchUri());
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                }
+            });
             convertView.findViewById(R.id.main_target).setOnClickListener(
                     new View.OnClickListener() {
                         @Override
